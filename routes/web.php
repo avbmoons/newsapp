@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AboutController;
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\IndexController as AdminIndexController;
 use App\Http\Controllers\Admin\NewsController as AdminNewsController;
@@ -12,7 +13,7 @@ use App\Http\Controllers\Admin\NewsSourceController as AdminNewsSourceController
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\NewsController;
-use App\Http\Controllers\MailController;
+//use App\Http\Controllers\MailController;
 use App\Http\Controllers\OrderController;
 use Illuminate\Support\Facades\Route;
 
@@ -36,6 +37,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [HomeController::class, 'index'])
     ->name('home');
 
+Route::get('about', [AboutController::class, 'index'])
+    ->name('about');
+
 Route::group(['prefix' => 'admin', 'as' => 'admin.'], static function () {
 
     // Route::get('/admin', [AdminIndexController::class, 'index'])
@@ -51,7 +55,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], static function () {
     Route::resource('newssources', AdminNewsSourceController::class);
 
     Route::resource('about', AdminAboutController::class);
-    
+
     Route::resource('home', AdminHomeController::class);
 
     Route::resource('users', AdminUsersController::class);
@@ -67,8 +71,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], static function () {
         ->name('admin.test2');
 });
 
-Route::view('about', 'about')    
-    ->name('about');
+// Route::view('about', 'about')    
+//     ->name('about');
 
 Route::group(['prefix' => ''], static function () {
 
@@ -96,9 +100,9 @@ Route::group(['prefix' => ''], static function () {
 
 // });
 
-Route::resource('mail', MailController::class);
+// Route::resource('mail', MailController::class);
 
-Route::resource('order', OrderController::class);
+//Route::resource('order', OrderController::class);
 
 
 

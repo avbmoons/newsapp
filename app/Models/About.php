@@ -22,6 +22,7 @@ class About extends Model
         'description',
         'is_visible',
         'status',
+        'image',
     ];
 
     protected $casts = [

@@ -7,9 +7,12 @@ namespace App\Http\Controllers\Admin;
 use App\Enums\SectionStatus;
 use App\Enums\SectionVisible;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\About\CreateRequest;
+use App\Http\Requests\About\EditRequest;
 use App\Models\About;
 use App\QueryBuilders\AboutsQueryBuilder;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
@@ -50,9 +53,10 @@ class AboutController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request): RedirectResponse
+    public function store(CreateRequest $request): RedirectResponse
     {
-        $about = new About($request->except('_token'));
+        //$about = new About($request->except('_token'));
+        $about = About::create($request->validated());
 
         if ($about->save()) {
             return redirect()->route('admin.about.index')->with('success', 'Раздел успешно добавлен');
@@ -97,9 +101,10 @@ class AboutController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, About $about): RedirectResponse
+    public function update(EditRequest $request, About $about): RedirectResponse
     {
-        $about = $about->fill($request->except('_token'));
+        //$about = $about->fill($request->except('_token'));
+        $about = $about->fill($request->validated());
 
         if ($about->save()) {
             return redirect()->route('admin.about.index')->with('success', 'Изменения успешно внесены');
@@ -114,8 +119,16 @@ class AboutController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(About $about): JsonResponse
     {
-        //
+        try {
+            $about->delete();
+
+            return \response()->json('ok');
+        } catch (\Exception $exception) {
+            //\Log::error($exception->getMessage(), [$exception]);
+
+            return \response()->json('error', 400);
+        }
     }
 }

@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use App\Models\Category;
 
 class News extends Model
 {
@@ -53,15 +54,24 @@ class News extends Model
 
     public function getNews(): Collection
     {
-        // return DB::select("select id, title, description, author, status, created_at from {$this->table}");
         return DB::table($this->table)->select(['id', 'title', 'description', 'author', 'status', 'created_at', 'source_id'])->get();
     }
 
     public function getNewsById(int $id)
     {
-        // return DB::selectOne("select id, title, description, author, status, created_at from {$this->table} where id = :id", [
-        //     'id' => $id
-        // ]);
         return DB::table($this->table)->find($id, ['id', 'title', 'author', 'source_id']);
+    }
+
+    public function getNewsByCategorySlug($slug)
+    {
+        $id = $this->category->getCategoryIdBySlug($slug);     
+        
+        $news = [];
+        foreach ($this->getAll() as $item) {
+            if ($item['category_id'] == $id) {
+                $news[] = $item;
+            }
+        }
+        return $news;
     }
 }

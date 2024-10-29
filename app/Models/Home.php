@@ -21,6 +21,7 @@ class Home extends Model
         'description',
         'is_visible',
         'status',
+        'image',
     ];
 
     protected $casts = [
@@ -30,11 +31,11 @@ class Home extends Model
 
     public function getHomes(): Collection
     {
-        return DB::table($this->table)->select(['id', 'title', 'resume', 'description', 'is_visible', 'status', 'created_at', 'updated_at'])->get();
+        return DB::table($this->table)->select(['id', 'title', 'resume', 'description', 'is_visible', 'status', 'created_at', 'updated_at', 'image'])->get();
     }
 
     public function getHomeById(int $id): mixed
     {
-        return DB::table($this->table)->find($id, ['id', 'title', 'resume', 'description', 'is_visible', 'status', 'created_at', 'updated_at']);
+        return DB::table($this->table)->find($id, ['id', 'title', 'resume', 'description', 'is_visible', 'status', 'created_at', 'updated_at', 'image']);
     }
 }

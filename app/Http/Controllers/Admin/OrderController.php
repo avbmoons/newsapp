@@ -6,9 +6,12 @@ namespace App\Http\Controllers\Admin;
 
 use App\Enums\OrderStatus;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Orders\CreateRequest;
+use App\Http\Requests\Orders\EditRequest;
 use App\Models\Order;
 use App\QueryBuilders\OrdersQueryBuilder;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
@@ -48,12 +51,13 @@ class OrderController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request): RedirectResponse
+    public function store(CreateRequest $request): RedirectResponse
     {
-        $order = new Order($request->except('_token'));
+        //$order = new Order($request->except('_token'));
+        $order = Order::create($request->validated());
 
         if ($order->save()) {
-            return redirect()->route('admin.orders.index')->with('success', 'Заявка успешно добавлена');
+            return redirect('/')->with('success', 'Заявка успешно добавлена');
         }
 
         return \back()->with('error', 'Не удалось сохранить заявку');
@@ -93,9 +97,10 @@ class OrderController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Order $order): RedirectResponse
+    public function update(EditRequest $request, Order $order): RedirectResponse
     {
-        $order = $order->fill($request->except('_token'));
+        //$order = $order->fill($request->except('_token'));
+        $order = $order->fill($request->validated());
 
         if ($order->save()) {
             return redirect()->route('admin.orders.index')->with('success', 'Изменения успешно внесены');
@@ -110,8 +115,16 @@ class OrderController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Order $order): JsonResponse
     {
-        //
+        try {
+            $order->delete();
+
+            return \response()->json('ok');
+        } catch (\Exception $exception) {
+            //\Log::error($exception->getMessage(), [$exception]);
+
+            return \response()->json('error', 400);
+        }
     }
 }

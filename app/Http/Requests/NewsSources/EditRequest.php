@@ -1,8 +1,12 @@
 <?php
 
+declare (strict_types=1);
+
 namespace App\Http\Requests\NewsSources;
 
+use App\Enums\NewsSourceStatus;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Enum;
 
 class EditRequest extends FormRequest
 {
@@ -13,7 +17,7 @@ class EditRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +28,27 @@ class EditRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'title' => ['required', 'string', 'min:3', 'max:191'],
+        'description' => ['nullable', 'string'],
+        'url' => ['required', 'string', 'min:3', 'max:191'],
+        'status' => ['required', new Enum(NewsSourceStatus::class)],
+        'image' => ['sometimes'],
+        ];        
+    }
+
+    public function attributes(): array{
+        return [
+            'title' => 'Название',            
+            'description' => 'Описание',
+            'url' => 'Ссылка',
+            'image' => 'Изображение',
+            'status' => 'Статус',
+        ];
+    }
+
+    public function messages(): array{
+        return [
+            'required' => 'Надо заполнить поле :attribute',
         ];
     }
 }

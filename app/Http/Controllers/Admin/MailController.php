@@ -6,9 +6,12 @@ namespace App\Http\Controllers\Admin;
 
 use App\Enums\MailStatus;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Mails\CreateRequest;
+use App\Http\Requests\Mails\EditRequest;
 use App\Models\Mail;
 use App\QueryBuilders\MailsQueryBuilder;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
@@ -48,12 +51,15 @@ class MailController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request): RedirectResponse
+    public function store(CreateRequest $request): RedirectResponse
     {
-        $mail = new Mail($request->except('_token'));
+        //$mail = new Mail($request->except('_token'));
+        $mail = Mail::create($request->validated());
 
         if ($mail->save()) {
-            return redirect()->route('admin.mails.index')->with('success', 'Сообщение успешно добавлено');
+            // return redirect()->route('admin.mails.index')->with('success', 'Сообщение успешно добавлено');
+            return redirect('/')->with('success', 'Сообщение успешно добавлено');
+            //return redirect()->back()->with('success', 'Сообщение успешно добавлено');
         }
 
         return \back()->with('error', 'Не удалось сохранить сообщение');
@@ -93,9 +99,10 @@ class MailController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Mail $mail): RedirectResponse
+    public function update(EditRequest $request, Mail $mail): RedirectResponse
     {
-        $mail = $mail->fill($request->except('_token'));
+        //$mail = $mail->fill($request->except('_token'));
+        $mail = $mail->fill($request->validated());
 
         if ($mail->save()) {
             return redirect()->route('admin.mails.index')->with('success', 'Изменения успешно внесены');
@@ -110,8 +117,16 @@ class MailController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Mail $mail): JsonResponse
     {
-        //
+        try {
+            $mail->delete();
+
+            return \response()->json('ok');
+        } catch (\Exception $exception) {
+            //\Log::error($exception->getMessage(), [$exception]);
+
+            return \response()->json('error', 400);
+        }
     }
 }

@@ -2,13 +2,14 @@
 
 declare (strict_types=1);
 
-namespace App\Http\Requests\News;
+namespace App\Http\Requests\Home;
 
-use App\Enums\NewsStatus;
+use App\Enums\SectionStatus;
+use App\Enums\SectionVisible;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;
 
-class CreateRequest extends FormRequest
+class EditRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -28,30 +29,23 @@ class CreateRequest extends FormRequest
     public function rules()
     {
         return [
-            'category_ids' => ['required', 'array'],
-            'category_ids.*' => ['exists:categories,id'],
-            'title' => ['required', 'string', 'min:3', 'max:191'],
-            'description' => ['nullable', 'string'],
-            'author' => ['required', 'string', 'min:3', 'max:191'],
-            'status' => ['required', new Enum(NewsStatus::class)],
-            'source_id' => ['sometimes'],
-            'image' => ['sometimes'],
+        'title' => ['required', 'string', 'min:3', 'max:255'],
+        'resume' => ['nullable', 'string', 'max:255'],
+        'description' => ['nullable', 'string'],
+        'is_visible' => ['required', new Enum(SectionVisible::class)],
+        'status' => ['required', new Enum(SectionStatus::class)],
         ];
-    }
-
-    public function getCategoryIds(): array
-    {
-        return (array) ($this->validated('category_ids'));
     }
 
     public function attributes(): array{
         return [
-            'title' => 'Заголовок',
-            'author' => 'Автор',
+            'title' => 'Раздел',
+            'resume' => 'Резюме',
             'description' => 'Описание',
             'image' => 'Изображение',
-            'source_id' => 'Источник',
+            'is_visible' => 'Отображение на странице',
             'status' => 'Статус',
+            'image' => ['sometimes'],
         ];
     }
 

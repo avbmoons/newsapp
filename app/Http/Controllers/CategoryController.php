@@ -7,32 +7,40 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\News;
+use App\QueryBuilders\CategoriesQueryBuilder;
 use App\QueryBuilders\NewsQueryBuilder;
+use App\QueryBuilders\NewsSourcesQueryBuilder;
+use Illuminate\Contracts\View\View;
 
 //use App\Http\Controllers\CategoryTrait;
 //use App\Http\Controllers\NewsTrait;
 
 class CategoryController extends Controller
 {
-    //use CategoryTrait;
-    //use NewsTrait;
-
-    public function index(Category $category)
+    public function index(CategoriesQueryBuilder $categoriesQueryBuilder): View
     {
-        return \view('category.index')
-        ->with('categories', $category->getCategories());
+        $categoriesList = $categoriesQueryBuilder->getCategoriesWithPaginathion();
+
+        return \view('category.index', [
+            'categoriesList' => $categoriesList
+        ]);
     }
 
     public function show(News $news, Category $category, NewsQueryBuilder $newsQueryBuilder, $slug)
     {
-        $news = Category::where('slug', $slug)->first()->news;
+        $newsList = Category::where('slug', $slug)->first()->news;
+        // $category = Category::with('slug')->get();
+        $categoryTitle = Category::where('slug', $slug)->pluck('title');
 
-        $newsList = $newsQueryBuilder->getNewsWithPaginathion();
-
-        return \view('category.show', ['newsList' => $newsList])
-        ->with('news', $news)
-        ->with('category', $category);
-        // ->with('news', $news->getNewsByCategorySlug($slug))
-        // ->with('category', $category->getCategoryNameBySlug($slug));
+        return \view('category.show', [
+            'newsList' => $newsList,
+            'news' => $news,
+            'category' => $category,
+            'categoryTitle' => $categoryTitle,
+        ]);
+        // ->with('newsList', $newsList)
+        // ->with('news', $news)
+        // ->with('category', $category);
     }
+
 }

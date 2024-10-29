@@ -48,9 +48,13 @@
             <label for="description">Описание</label>
             <textarea id="description" name="description" class="form-control">{!! $newssource->description !!}</textarea>
         </div>
-        <div class="form-group">
+        {{-- <div class="form-group">
             <label for="url">Ссылка</label>
             <textarea id="url" name="url" class="form-control">{!! $newssource->url !!}</textarea>
+        </div> --}}
+        <div class="form-group">
+          <label for="url">Ссылка</label>
+          <input type="url" id="url" name="url" class="form-control" value="{!! $newssource->url !!}">
         </div>
         <div class="form-group">
           <label for="image">Изображение</label>

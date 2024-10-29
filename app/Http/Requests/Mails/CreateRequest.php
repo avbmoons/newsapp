@@ -1,8 +1,12 @@
 <?php
 
+declare (strict_types=1);
+
 namespace App\Http\Requests\Mails;
 
+use App\Enums\MailStatus;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Enum;
 
 class CreateRequest extends FormRequest
 {
@@ -13,7 +17,7 @@ class CreateRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +28,25 @@ class CreateRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+        'username' => ['required', 'string', 'min:3', 'max:255'],
+        'email' => ['required', 'string', 'min:3', 'max:255'],
+        'description' => ['required', 'string'],
+        'status' => ['required', new Enum(MailStatus::class)],
+        ];
+    }
+
+    public function attributes(): array{
+        return [
+            'username' => 'Ваше имя',
+            'email' => 'Ваш e-mail',
+            'description' => 'Ваш комментарий',
+            'status' => 'Статус',
+        ];
+    }
+
+    public function messages(): array{
+        return [
+            'required' => 'Надо заполнить поле :attribute',
         ];
     }
 }

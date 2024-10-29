@@ -7,7 +7,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 //use App\Http\Controllers\NewsTrait;
 use App\Models\News;
+use App\QueryBuilders\CategoriesQueryBuilder;
 use App\QueryBuilders\NewsQueryBuilder;
+use App\QueryBuilders\NewsSourcesQueryBuilder;
 use Illuminate\Contracts\View\View;
 
 class NewsController extends Controller
@@ -15,35 +17,26 @@ class NewsController extends Controller
     //use NewsTrait;
     //use News;
 
-    public function index(NewsQueryBuilder $newsQueryBuilder): View
+    public function index(NewsQueryBuilder $newsQueryBuilder, CategoriesQueryBuilder $categoriesQueryBuilder, NewsSourcesQueryBuilder $newsSourcesQueryBuilder): View
     {
-         //$news = News::getNews();
          $newsList = $newsQueryBuilder->getNewsWithPaginathion();
 
-        //return \view('news.index')->with('news', $news);
-        return \view('news.index', ['newsList' => $newsList]);
+        return \view('news.index', [
+            'categories' => $categoriesQueryBuilder->getAll(),
+            'newsSources' => $newsSourcesQueryBuilder->getAll(),
+            'newsList' => $newsList,
+        ]);
     }
 
-    public function show(int $id, News $news): View
+    public function show(int $id, News $news, CategoriesQueryBuilder $categoriesQueryBuilder, NewsSourcesQueryBuilder $newsSourcesQueryBuilder): View
     {
-        //$news = News::getNewsId($id);
+        $news = News::findOrFail($id);
 
-        return \view('news.show')->with('news', $news->getNewsById($id));
-        //return \view('news.show', [$id])->with('news', $news->getNewsById($id));
-        //return \view('news.show', ['news' => $this->getNews($id)]);
+        return \view('news.show', [
+            'news' => $news,
+            'categories' => $categoriesQueryBuilder->getAll(),
+            'newsSources' => $newsSourcesQueryBuilder->getAll(),
+        ]);
     }
 
-    // public function index()
-    // {
-    //     // dd($this->getNews());
-    //     // return $this->getNews();
-    //     return \view('news.index', [
-    //         'news'=>$this->getNews(),
-    //     ]);
-    // }
-
-    // public function show($id)
-    // {
-    //     return $this->getNews($id);
-    // }
 }

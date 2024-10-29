@@ -6,9 +6,12 @@ namespace App\Http\Controllers\Admin;
 
 use App\Enums\NewsSourceStatus;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\NewsSources\CreateRequest;
+use App\Http\Requests\NewsSources\EditRequest;
 use App\Models\NewsSource;
 use App\QueryBuilders\NewsSourcesQueryBuilder;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
@@ -50,9 +53,10 @@ class NewsSourceController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request): RedirectResponse
+    public function store(CreateRequest $request): RedirectResponse
     {
-        $newssource = new NewsSource($request->except('_token'));
+        //$newssource = new NewsSource($request->except('_token'));
+        $newssource = NewsSource::create($request->validated());
 
         if ($newssource->save()) {
             return redirect()->route('admin.newssources.index')->with('success', 'Сообщение успешно добавлено');
@@ -95,9 +99,10 @@ class NewsSourceController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, NewsSource $newssource): RedirectResponse
+    public function update(EditRequest $request, NewsSource $newssource): RedirectResponse
     {
-        $newssource = $newssource->fill($request->except('_token'));
+        $newssource = $newssource->fill($request->validated());
+        //$newssource = $newssource->fill($request->except('_token'));
 
         if ($newssource->save()) {
             return redirect()->route('admin.newssources.index')->with('success', 'Изменения успешно внесены');
@@ -112,8 +117,16 @@ class NewsSourceController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(NewsSource $newssource): JsonResponse
     {
-        //
+        try {
+            $newssource->delete();
+
+            return \response()->json('ok');
+        } catch (\Exception $exception) {
+            //\Log::error($exception->getMessage(), [$exception]);
+
+            return \response()->json('error', 400);
+        }
     }
 }

@@ -8,16 +8,16 @@
     </div>
 
     <div class="row mb-2">
-        @forelse ($categories as $category)
+        @forelse ($categoriesList as $categories)
         <div class="col-md-6">
                 <div class="row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
                     <div class="col p-4 d-flex flex-column position-static">
-                        <strong class="d-inline-block mb-2 text-success">{{ $category->id }} {{ $category->title }}</strong>
+                        <strong class="d-inline-block mb-2 text-success">{{ $categories->id }} {{ $categories->title }}</strong>
                         <h3 class="mb-0">
-                            <a href="{{ route('category.show', $category->slug) }}">
+                            <a href="{{ route('category.show', $categories->slug) }}">
                         </h3>
-                        <div class="mb-1 text-muted">{{ $category->slug }}</div>
-                        <a href="{{ route('category.show', $category->slug) }}">
+                        <div class="mb-1 text-muted">{{ $categories->slug }}</div>
+                        <a href="{{ route('category.show', $categories->slug) }}">
                             Новости категории...                
                         </a>
                     </div>
@@ -29,6 +29,8 @@
         @empty
             <h2>Новостей нет</h2>  
         @endforelse
+
+        {{ $categoriesList->links() }}
     </div>
 
     {{-- <div class="row mb-2">

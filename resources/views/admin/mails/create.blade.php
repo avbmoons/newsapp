@@ -1,10 +1,11 @@
-@extends('layouts.admin')
+@extends('layouts.main')
 
-@section('title') Добавить сообщение @parent @stop
+{{-- @section('title') Отправить сообщение @parent @stop --}}
+@section('title', 'Отправить сообщение')
 
 @section('content')
-<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">Добавить сообщение</h1>
+{{-- <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Отправить сообщение</h1>
     <div class="btn-toolbar mb-2 mb-md-0">
       <div class="btn-group mr-2">
         <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
@@ -17,9 +18,50 @@
     </div>    
 </div>
 
-<x-mail></x-mail>
+<x-mail></x-mail> --}}
 
-<div class="form-group">
+<div>
+  <h3>Отправить сообщение</h3>
+  <a href="{{ url()->previous() }}" >Назад ...</a>
+  <br>
+  <hr>
+  @if ($errors->any())
+      @foreach ($errors->all() as $error)
+      <x-alert type="danger" :message="$error"></x-alert>        
+      @endforeach        
+  @endif
+
+  <form method="post" action="{{ route('admin.mails.store') }}">
+      @csrf      
+      <div class="form-group">
+          <label for="username">Ваше имя</label>
+          <input type="text" id="username" name="username" class="form-control" value="{{ old('username')}}">
+      </div>
+      <div class="form-group">
+          <label for="email">Ваш e-mail</label>
+          <input type="email" id="email" name="email" class="form-control" value="{{ old('email')}}">
+      </div>
+      <div class="form-group">
+          <label for="description">Ваш комментарий</label>
+          <textarea class="form-control" name="description" id="description" >{{ old('description')}}</textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="status">Статус</label>
+        <select class="form-control" name="status" id="status">
+          @foreach ($statuses as $status)
+          <option @if(old('status') === $status) selected @endif>{{ $status }}</option>
+              
+          @endforeach
+        </select>
+      </div>
+
+      <br>
+      <button type="submit" class="btn btn-success">Отправить</button>
+  </form>
+</div>
+
+{{-- <div class="form-group">
   <label for="status">Статус</label>
   <select class="form-control" name="status" id="status">
     @foreach ($statuses as $status)
@@ -27,9 +69,8 @@
         
     @endforeach
   </select>
-</div>
+</div> --}}
     
 @endsection
 
 
-Создать сообщение

@@ -73,19 +73,6 @@ class NewsController extends Controller
      */
     public function store(CreateRequest $request): RedirectResponse    
     {
-        //dd($request->all());
-        //dd($request->input('title'));
-        // $request->validate([
-        //     'title'=>'required',
-        //     // 'author'=>'required',
-        // ]);
-
-        // $news = new News();
-        // $news->title = $request->input('title');
-        ///
-        //$news = new News($request->except('_token', 'category_id'));   //News::create();
-        //dd($request->validated());
-
         $news = News::create($request->validated());
 
         if ($news->save()) {
@@ -143,8 +130,7 @@ class NewsController extends Controller
 
         if ($news->save()) {
             $news->categories()->sync($request->getCategoryIds());
-            //$news->categories()->sync((array) $request->input('category_ids'));
-            //$news->newsSource()->$request->input('source_id');
+
             return redirect()->route('admin.news.index')->with('success', 'Изменения успешно внесены');
         }
 

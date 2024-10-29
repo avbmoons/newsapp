@@ -18,9 +18,29 @@ class CategoriesQueryBuilder extends QueryBuilder
         $this->model = Category::query();
     }
 
-    function getAll(): Collection
+    public function getAll(): Collection
     {
         return Category::query()->get();
+    }
+
+    public function getCategoryByStatus(string $status): Collection
+    {
+        return Category::query()->where('status', $status)->get();
+    }
+
+    public function getCategoryById(int $id): Collection
+    {
+        return Category::query()->where('id', $id)->get();
+    }
+
+    public function getCategoryBySlug(string $slug): Collection
+    {
+        return Category::query()->where('slug', $slug)->get();
+    }
+
+    public function getCategoryIdBySlug($slug): mixed
+    {
+        return Category::query()->where('slug', $slug)->get('id');
     }
 
     public function getCategoriesWithPaginathion(int $quantity = 10): LengthAwarePaginator
